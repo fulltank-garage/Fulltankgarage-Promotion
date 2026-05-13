@@ -37,7 +37,8 @@ const promotions: Promotion[] = [
 ]
 
 function App() {
-  const [items, setItems] = useState<Promotion[]>(promotions)
+  const [items, setItems] = useState<Promotion[]>([])
+  const [isLoadingPromotions, setIsLoadingPromotions] = useState(true)
 
   useEffect(() => {
     let isMounted = true
@@ -71,6 +72,11 @@ function App() {
           setItems(promotions)
         }
       })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoadingPromotions(false)
+        }
+      })
 
     return () => {
       isMounted = false
@@ -94,6 +100,7 @@ function App() {
         </nav>
 
         <section className="space-y-4">
+          {isLoadingPromotions ? <PromotionListSkeleton /> : null}
           {items.map((promotion) => (
             <article
               className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
@@ -142,6 +149,35 @@ function App() {
         </section>
       </div>
     </main>
+  )
+}
+
+function PromotionListSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 3 }, (_, index) => (
+        <article
+          aria-hidden="true"
+          className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
+          key={index}
+        >
+          <div className="relative aspect-[16/9] skeleton-shimmer">
+            <div className="absolute bottom-5 left-5 h-10 w-44 rounded-xl bg-black/20" />
+            <div className="absolute bottom-5 left-5 mt-3 h-8 w-36 translate-y-12 rounded-lg bg-black/20" />
+          </div>
+          <div className="p-4">
+            <div className="h-6 w-24 rounded-full skeleton-shimmer" />
+            <div className="mt-4 h-6 w-4/5 rounded-xl skeleton-shimmer" />
+            <div className="mt-3 h-4 w-full rounded-xl skeleton-shimmer" />
+            <div className="mt-2 h-4 w-2/3 rounded-xl skeleton-shimmer" />
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+              <div className="h-5 w-36 rounded-xl skeleton-shimmer" />
+              <div className="size-5 rounded-full skeleton-shimmer" />
+            </div>
+          </div>
+        </article>
+      ))}
+    </>
   )
 }
 
