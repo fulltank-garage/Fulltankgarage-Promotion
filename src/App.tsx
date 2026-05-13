@@ -78,7 +78,7 @@ function App() {
   }, [])
 
   return (
-    <main className="min-h-dvh bg-[#070707] px-4 py-5 text-white">
+    <main className="min-h-dvh bg-[#070707] px-4 pb-5 text-white">
       <div className="mx-auto w-full max-w-2xl">
         <nav className="sticky top-0 z-20 -mx-4 mb-5 border-b border-white/10 bg-[#070707]/94 px-4 py-3 backdrop-blur">
           <div className="mx-auto flex w-full max-w-2xl items-center justify-center gap-3">
