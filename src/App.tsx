@@ -1,5 +1,6 @@
 import { CalendarDays, ChevronRight, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import fulltankGarageLogo from './assets/fulltank-garage-logo.jpg'
 import { getJson } from './lib/api'
 
 type Promotion = {
@@ -80,9 +81,11 @@ function App() {
     <main className="min-h-dvh bg-[#070707] px-4 py-5 text-white">
       <div className="mx-auto w-full max-w-2xl">
         <header className="mb-5">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-[#ff403b]">
-            FullTank Promotion
-          </p>
+          <img
+            alt="FullTank Garage"
+            className="mb-4 h-auto w-52 rounded-xl object-cover shadow-[0_16px_38px_rgba(0,0,0,0.36)]"
+            src={fulltankGarageLogo}
+          />
           <h1 className="mt-2 text-3xl font-black leading-tight">
             โปรโมชันล่าสุด
           </h1>
@@ -107,9 +110,11 @@ function App() {
                   <p className="break-words text-4xl font-black tracking-tight text-white sm:text-5xl">
                     {promotion.imageText}
                   </p>
-                  <p className="mt-1 text-sm font-black uppercase tracking-[0.28em] text-white/68">
-                    FullTank Garage
-                  </p>
+                  <img
+                    alt="FullTank Garage"
+                    className="mt-3 h-auto w-40 rounded-lg object-cover opacity-90"
+                    src={fulltankGarageLogo}
+                  />
                 </div>
               </div>
 
