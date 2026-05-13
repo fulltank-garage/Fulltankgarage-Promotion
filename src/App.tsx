@@ -52,19 +52,21 @@ function App() {
       }[]
     >('/public/promotions?public=true')
       .then((promotionsFromApi) => {
-        if (!isMounted || promotionsFromApi.length === 0) {
+        if (!isMounted) {
           return
         }
 
         setItems(
-          promotionsFromApi.map((promotion, index) => ({
-            title: promotion.title,
-            description: promotion.description || 'โปรโมชันจาก FullTank Garage',
-            imageUrl: promotion.imageUrl,
-            validUntil: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
-            gradient: promotions[index % promotions.length].gradient,
-            imageText: promotion.title.split(/\s+/).slice(0, 2).join(' ').toUpperCase(),
-          })),
+          promotionsFromApi.length > 0
+            ? promotionsFromApi.map((promotion, index) => ({
+                title: promotion.title,
+                description: promotion.description || 'โปรโมชันจาก FullTank Garage',
+                imageUrl: promotion.imageUrl,
+                validUntil: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
+                gradient: promotions[index % promotions.length].gradient,
+                imageText: promotion.title.split(/\s+/).slice(0, 2).join(' ').toUpperCase(),
+              }))
+            : promotions,
         )
       })
       .catch(() => {
