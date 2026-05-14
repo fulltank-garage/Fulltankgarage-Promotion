@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronRight, Tag } from 'lucide-react'
+import { ArrowLeft, CalendarDays, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import fulltankGarageLogo from './assets/fulltank-garage-logo.jpg'
 import { getJson } from './lib/api'
@@ -39,6 +39,7 @@ const promotions: Promotion[] = [
 function App() {
   const [items, setItems] = useState<Promotion[]>([])
   const [isLoadingPromotions, setIsLoadingPromotions] = useState(true)
+  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(null)
 
   useEffect(() => {
     let isMounted = true
@@ -89,68 +90,150 @@ function App() {
     <main className="min-h-dvh bg-[#070707] px-4 pb-5 text-white">
       <div className="mx-auto w-full max-w-2xl">
         <nav className="sticky top-0 z-20 -mx-4 mb-5 border-b border-white/10 bg-[#070707]/94 px-4 py-3 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-2xl items-center justify-center gap-3">
+          <div className="mx-auto grid min-h-11 w-full max-w-2xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-3">
+            {selectedPromotion ? (
+              <button
+                aria-label="กลับไปหน้าโปรโมชัน"
+                className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white transition active:scale-95"
+                onClick={() => setSelectedPromotion(null)}
+                type="button"
+              >
+                <ArrowLeft size={22} />
+              </button>
+            ) : (
+              <div />
+            )}
             <img
               alt="FullTank Garage"
-              className="h-11 w-11 shrink-0 rounded-xl object-cover shadow-[0_10px_24px_rgba(255,64,59,0.18)]"
+              className="mx-auto h-11 w-11 shrink-0 rounded-xl object-cover shadow-[0_10px_24px_rgba(255,64,59,0.18)]"
               src={fulltankGarageLogo}
             />
-            <h1 className="min-w-0 text-center text-[22px] font-black leading-none text-white">
-              โปรโมชันล่าสุด
-            </h1>
+            <div />
           </div>
+          <h1 className="mx-auto mt-2 max-w-2xl truncate text-center text-[22px] font-black leading-none text-white">
+            {selectedPromotion ? selectedPromotion.title : 'โปรโมชันล่าสุด'}
+          </h1>
         </nav>
 
-        <section className="space-y-4">
-          {isLoadingPromotions ? <PromotionListSkeleton /> : null}
-          {items.map((promotion) => (
-            <article
-              className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
-              key={promotion.title}
-            >
-              <div className={`relative aspect-[16/9] bg-gradient-to-br ${promotion.gradient}`}>
-                {promotion.imageUrl ? (
-                  <img
-                    alt=""
-                    className="absolute inset-0 size-full object-cover"
-                    src={promotion.imageUrl}
-                  />
-                ) : null}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_18%,rgba(255,255,255,0.2),transparent_28%),linear-gradient(135deg,transparent,rgba(0,0,0,0.58))]" />
-                <div className="absolute bottom-5 left-5 right-5">
-                  <p className="break-words text-4xl font-black tracking-tight text-white sm:text-5xl">
-                    {promotion.imageText}
-                  </p>
-                  <img
-                    alt="FullTank Garage"
-                    className="mt-3 h-auto w-40 rounded-lg object-cover opacity-90"
-                    src={fulltankGarageLogo}
-                  />
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#ff403b]/12 px-3 py-1 text-xs font-black text-[#ff6965]">
-                  <Tag size={14} />
-                  โปรโมชัน
-                </div>
-                <h2 className="text-xl font-black">{promotion.title}</h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
-                  {promotion.description}
-                </p>
-                <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
-                  <div className="flex items-center gap-2 text-sm font-bold text-white/62">
-                    <CalendarDays size={17} />
-                    ถึง {promotion.validUntil}
-                  </div>
-                  <ChevronRight className="text-[#ff403b]" size={20} />
-                </div>
-              </div>
-            </article>
-          ))}
-        </section>
+        {selectedPromotion ? (
+          <PromotionDetail
+            promotion={selectedPromotion}
+            onBack={() => setSelectedPromotion(null)}
+          />
+        ) : (
+          <section className="space-y-4">
+            {isLoadingPromotions ? <PromotionListSkeleton /> : null}
+            {items.map((promotion) => (
+              <PromotionCard
+                key={promotion.title}
+                onOpen={() => setSelectedPromotion(promotion)}
+                promotion={promotion}
+              />
+            ))}
+          </section>
+        )}
       </div>
     </main>
+  )
+}
+
+function PromotionCard({
+  onOpen,
+  promotion,
+}: {
+  onOpen: () => void
+  promotion: Promotion
+}) {
+  return (
+    <article className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]">
+      <button className="block w-full text-left" onClick={onOpen} type="button">
+        <PromotionMedia promotion={promotion} />
+
+        <div className="p-4">
+          <h2 className="text-xl font-black">{promotion.title}</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
+            {promotion.description}
+          </p>
+          <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+            <div className="flex items-center gap-2 text-sm font-bold text-white/62">
+              <CalendarDays size={17} />
+              ถึง {promotion.validUntil}
+            </div>
+            <div className="flex items-center gap-1 text-sm font-black text-[#ff6965]">
+              อ่านรายละเอียด
+              <ChevronRight className="text-[#ff403b]" size={20} />
+            </div>
+          </div>
+        </div>
+      </button>
+    </article>
+  )
+}
+
+function PromotionDetail({
+  onBack,
+  promotion,
+}: {
+  onBack: () => void
+  promotion: Promotion
+}) {
+  return (
+    <article className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]">
+      <PromotionMedia promotion={promotion} />
+
+      <div className="p-5">
+        <h2 className="text-2xl font-black leading-tight text-white">
+          {promotion.title}
+        </h2>
+        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-[#0d0d0d] px-4 py-3 text-sm font-black text-white/68">
+          <CalendarDays className="text-[#ff403b]" size={18} />
+          ใช้ได้ถึง {promotion.validUntil}
+        </div>
+        <p className="mt-5 text-base font-semibold leading-8 text-white/70">
+          {promotion.description}
+        </p>
+        <div className="mt-5 rounded-2xl border border-[#ff403b]/22 bg-[#ff403b]/8 p-4">
+          <h3 className="text-sm font-black text-white">
+            รายละเอียดโปรโมชัน
+          </h3>
+          <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
+            สามารถแสดงเงื่อนไข ส่วนลด ระยะเวลา และรายละเอียดเพิ่มเติมจากหลังบ้านได้ที่หน้านี้ เมื่อต้องการสอบถามเพิ่มเติมให้ติดต่อ FullTank Garage ผ่าน LINE หรือหน้าร้าน
+          </p>
+        </div>
+        <button
+          className="mt-5 h-12 w-full rounded-xl border border-white/12 bg-white/5 text-sm font-black text-white transition active:scale-[0.99]"
+          onClick={onBack}
+          type="button"
+        >
+          กลับไปหน้าโปรโมชัน
+        </button>
+      </div>
+    </article>
+  )
+}
+
+function PromotionMedia({ promotion }: { promotion: Promotion }) {
+  return (
+    <div className={`relative aspect-[16/9] bg-gradient-to-br ${promotion.gradient}`}>
+      {promotion.imageUrl ? (
+        <img
+          alt=""
+          className="absolute inset-0 size-full object-cover"
+          src={promotion.imageUrl}
+        />
+      ) : null}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_18%,rgba(255,255,255,0.2),transparent_28%),linear-gradient(135deg,transparent,rgba(0,0,0,0.58))]" />
+      <div className="absolute bottom-5 left-5 right-5">
+        <p className="break-words text-4xl font-black tracking-tight text-white sm:text-5xl">
+          {promotion.imageText}
+        </p>
+        <img
+          alt="FullTank Garage"
+          className="mt-3 h-auto w-40 rounded-lg object-cover opacity-90"
+          src={fulltankGarageLogo}
+        />
+      </div>
+    </div>
   )
 }
 
