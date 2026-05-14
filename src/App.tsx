@@ -12,6 +12,19 @@ type Promotion = {
   imageText: string
 }
 
+const promotionHashPrefix = '#promotion/'
+
+const getPromotionKey = (title: string) =>
+  encodeURIComponent(title.trim().toLowerCase().replace(/\s+/g, '-'))
+
+const getPromotionKeyFromHash = () => {
+  if (!window.location.hash.startsWith(promotionHashPrefix)) {
+    return ''
+  }
+
+  return window.location.hash.slice(promotionHashPrefix.length)
+}
+
 const promotions: Promotion[] = [
   {
     title: 'ติดฟิล์มรอบคัน ราคาพิเศษ',
@@ -39,16 +52,17 @@ const promotions: Promotion[] = [
 function App() {
   const [items, setItems] = useState<Promotion[]>([])
   const [isLoadingPromotions, setIsLoadingPromotions] = useState(true)
-  const [selectedPromotionTitle, setSelectedPromotionTitle] = useState('')
+  const [selectedPromotionKey, setSelectedPromotionKey] = useState(getPromotionKeyFromHash)
   const selectedPromotion = useMemo(
     () =>
-      selectedPromotionTitle
-        ? items.find((promotion) => promotion.title === selectedPromotionTitle) ||
-          promotions.find((promotion) => promotion.title === selectedPromotionTitle) ||
+      selectedPromotionKey
+        ? items.find((promotion) => getPromotionKey(promotion.title) === selectedPromotionKey) ||
+          promotions.find((promotion) => getPromotionKey(promotion.title) === selectedPromotionKey) ||
           null
         : null,
-    [items, selectedPromotionTitle],
+    [items, selectedPromotionKey],
   )
+  const isDetailView = Boolean(selectedPromotionKey)
 
   useEffect(() => {
     let isMounted = true
@@ -95,13 +109,30 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      setSelectedPromotionKey(getPromotionKeyFromHash())
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
   const openPromotion = (promotion: Promotion) => {
-    setSelectedPromotionTitle(promotion.title)
+    const nextHash = `${promotionHashPrefix}${getPromotionKey(promotion.title)}`
+    if (window.location.hash === nextHash) {
+      setSelectedPromotionKey(getPromotionKey(promotion.title))
+    } else {
+      history.pushState('', document.title, nextHash)
+      setSelectedPromotionKey(getPromotionKey(promotion.title))
+    }
     requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }))
   }
 
   const closePromotion = () => {
-    setSelectedPromotionTitle('')
+    history.pushState('', document.title, window.location.pathname + window.location.search)
+    setSelectedPromotionKey('')
     requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }))
   }
 
@@ -110,7 +141,7 @@ function App() {
       <div className="mx-auto w-full max-w-2xl">
         <nav className="sticky top-0 z-20 -mx-4 mb-5 border-b border-white/10 bg-[#070707]/94 px-4 py-3 backdrop-blur">
           <div className="relative mx-auto flex min-h-11 w-full max-w-2xl items-center justify-center">
-            {selectedPromotion ? (
+            {isDetailView ? (
               <button
                 aria-label="กลับไปหน้าโปรโมชัน"
                 className="absolute left-0 grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white transition active:scale-95"
@@ -135,6 +166,8 @@ function App() {
 
         {selectedPromotion ? (
           <PromotionDetail promotion={selectedPromotion} />
+        ) : isDetailView ? (
+          <PromotionDetailSkeleton />
         ) : (
           <section className="space-y-4">
             {isLoadingPromotions ? <PromotionListSkeleton /> : null}
@@ -149,6 +182,31 @@ function App() {
         )}
       </div>
     </main>
+  )
+}
+
+function PromotionDetailSkeleton() {
+  return (
+    <article
+      aria-hidden="true"
+      className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
+    >
+      <div className="relative aspect-[16/9] skeleton-shimmer">
+        <div className="absolute bottom-5 left-5 h-10 w-44 rounded-xl bg-black/20" />
+        <div className="absolute bottom-5 left-5 mt-3 h-8 w-36 translate-y-12 rounded-lg bg-black/20" />
+      </div>
+      <div className="p-5">
+        <div className="h-8 w-4/5 rounded-xl skeleton-shimmer" />
+        <div className="mt-4 h-12 w-full rounded-2xl skeleton-shimmer" />
+        <div className="mt-5 h-5 w-full rounded-xl skeleton-shimmer" />
+        <div className="mt-3 h-5 w-5/6 rounded-xl skeleton-shimmer" />
+        <div className="mt-5 rounded-2xl border border-[#ff403b]/22 bg-[#ff403b]/8 p-4">
+          <div className="h-4 w-36 rounded-xl skeleton-shimmer" />
+          <div className="mt-3 h-4 w-full rounded-xl skeleton-shimmer" />
+          <div className="mt-2 h-4 w-2/3 rounded-xl skeleton-shimmer" />
+        </div>
+      </div>
+    </article>
   )
 }
 
