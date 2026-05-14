@@ -1,5 +1,5 @@
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import fulltankGarageLogo from './assets/fulltank-garage-logo.jpg'
 import { getJson } from './lib/api'
 
@@ -39,7 +39,16 @@ const promotions: Promotion[] = [
 function App() {
   const [items, setItems] = useState<Promotion[]>([])
   const [isLoadingPromotions, setIsLoadingPromotions] = useState(true)
-  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(null)
+  const [selectedPromotionTitle, setSelectedPromotionTitle] = useState('')
+  const selectedPromotion = useMemo(
+    () =>
+      selectedPromotionTitle
+        ? items.find((promotion) => promotion.title === selectedPromotionTitle) ||
+          promotions.find((promotion) => promotion.title === selectedPromotionTitle) ||
+          null
+        : null,
+    [items, selectedPromotionTitle],
+  )
 
   useEffect(() => {
     let isMounted = true
@@ -86,6 +95,16 @@ function App() {
     }
   }, [])
 
+  const openPromotion = (promotion: Promotion) => {
+    setSelectedPromotionTitle(promotion.title)
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }))
+  }
+
+  const closePromotion = () => {
+    setSelectedPromotionTitle('')
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'auto' }))
+  }
+
   return (
     <main className="min-h-dvh bg-[#070707] px-4 pb-5 text-white">
       <div className="mx-auto w-full max-w-2xl">
@@ -95,7 +114,7 @@ function App() {
               <button
                 aria-label="กลับไปหน้าโปรโมชัน"
                 className="absolute left-0 grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white transition active:scale-95"
-                onClick={() => setSelectedPromotion(null)}
+                onClick={closePromotion}
                 type="button"
               >
                 <ChevronLeft size={28} strokeWidth={2.6} />
@@ -122,7 +141,7 @@ function App() {
             {items.map((promotion) => (
               <PromotionCard
                 key={promotion.title}
-                onOpen={() => setSelectedPromotion(promotion)}
+                onOpen={() => openPromotion(promotion)}
                 promotion={promotion}
               />
             ))}
