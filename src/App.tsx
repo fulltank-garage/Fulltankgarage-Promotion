@@ -6,6 +6,7 @@ import { getJson } from './lib/api'
 type Promotion = {
   title: string
   description: string
+  detail: string
   imageUrl?: string
   validUntil: string
   gradient: string
@@ -29,6 +30,7 @@ const promotions: Promotion[] = [
   {
     title: 'ติดฟิล์มรอบคัน ราคาพิเศษ',
     description: 'เลือกรุ่นฟิล์มยอดนิยมพร้อมรับส่วนลดค่าแรงติดตั้งสำหรับรถเก๋งและ SUV',
+    detail: 'โปรโมชันสำหรับลูกค้าที่ติดตั้งฟิล์มรอบคันกับ FullTank Garage สามารถสอบถามรุ่นฟิล์ม เงื่อนไขส่วนลด และคิวติดตั้งได้ที่หน้าร้านหรือ LINE Official',
     validUntil: '31 พ.ค. 2569',
     gradient: 'from-[#ff342f] via-[#6f0908] to-[#121212]',
     imageText: 'FULL SET',
@@ -36,6 +38,7 @@ const promotions: Promotion[] = [
   {
     title: 'อัปเกรดบานหน้า Clear Vision',
     description: 'เพิ่มความสบายตาด้วยฟิล์มใสกันร้อนสำหรับลูกค้าที่ติดตั้งรอบคัน',
+    detail: 'เหมาะสำหรับลูกค้าที่ต้องการเพิ่มประสิทธิภาพกันร้อนบริเวณบานหน้า โดยยังคงทัศนวิสัยชัดเจน รายละเอียดขึ้นอยู่กับรุ่นฟิล์มและรถแต่ละคัน',
     validUntil: '15 มิ.ย. 2569',
     gradient: 'from-[#ff4a45] via-[#243247] to-[#101010]',
     imageText: 'FRONT',
@@ -43,6 +46,7 @@ const promotions: Promotion[] = [
   {
     title: 'ลูกค้าเก่าแนะนำเพื่อน',
     description: 'รับสิทธิ์ส่วนลดบริการดูแลฟิล์ม เมื่อเพื่อนลงทะเบียนรับประกันสำเร็จ',
+    detail: 'เมื่อลูกค้าเก่าแนะนำเพื่อนมาติดตั้งและลงทะเบียนรับประกันสำเร็จ สามารถติดต่อทีมงานเพื่อรับสิทธิ์ส่วนลดบริการดูแลฟิล์มตามเงื่อนไขที่ร้านกำหนด',
     validUntil: '30 มิ.ย. 2569',
     gradient: 'from-[#ff2f2b] via-[#3b0404] to-[#070707]',
     imageText: 'REFER',
@@ -71,6 +75,7 @@ function App() {
       {
         title: string
         description?: string
+        detail?: string
         imageUrl?: string
         endsAt?: string
       }[]
@@ -85,6 +90,7 @@ function App() {
             ? promotionsFromApi.map((promotion, index) => ({
                 title: promotion.title,
                 description: promotion.description || 'โปรโมชันจาก FullTank Garage',
+                detail: promotion.detail || promotion.description || 'สอบถามรายละเอียดเพิ่มเติมได้ที่ FullTank Garage',
                 imageUrl: promotion.imageUrl,
                 validUntil: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
                 gradient: promotions[index % promotions.length].gradient,
@@ -268,7 +274,7 @@ function PromotionDetail({
             รายละเอียดโปรโมชัน
           </h3>
           <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
-            สามารถแสดงเงื่อนไข ส่วนลด ระยะเวลา และรายละเอียดเพิ่มเติมจากหลังบ้านได้ที่หน้านี้ เมื่อต้องการสอบถามเพิ่มเติมให้ติดต่อ FullTank Garage ผ่าน LINE หรือหน้าร้าน
+            {promotion.detail}
           </p>
         </div>
       </div>
