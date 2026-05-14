@@ -276,11 +276,11 @@ function PromotionDetail({
 
 function PromotionMedia({ promotion }: { promotion: Promotion }) {
   return (
-    <div className={`promotion-square-media relative bg-gradient-to-br ${promotion.gradient}`}>
+    <div className="promotion-square-media relative bg-[#080808]">
       {promotion.imageUrl ? (
         <img
           alt=""
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-contain"
           src={promotion.imageUrl}
         />
       ) : null}
