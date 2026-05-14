@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, ChevronRight } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import fulltankGarageLogo from './assets/fulltank-garage-logo.jpg'
 import { getJson } from './lib/api'
@@ -90,29 +90,28 @@ function App() {
     <main className="min-h-dvh bg-[#070707] px-4 pb-5 text-white">
       <div className="mx-auto w-full max-w-2xl">
         <nav className="sticky top-0 z-20 -mx-4 mb-5 border-b border-white/10 bg-[#070707]/94 px-4 py-3 backdrop-blur">
-          <div className="mx-auto grid min-h-11 w-full max-w-2xl grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center gap-3">
+          <div className="relative mx-auto flex min-h-11 w-full max-w-2xl items-center justify-center">
             {selectedPromotion ? (
               <button
                 aria-label="กลับไปหน้าโปรโมชัน"
-                className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white transition active:scale-95"
+                className="absolute left-0 grid size-11 place-items-center rounded-xl border border-white/10 bg-white/5 text-white transition active:scale-95"
                 onClick={() => setSelectedPromotion(null)}
                 type="button"
               >
-                <ArrowLeft size={22} />
+                <ChevronLeft size={28} strokeWidth={2.6} />
               </button>
-            ) : (
-              <div />
-            )}
-            <img
-              alt="FullTank Garage"
-              className="mx-auto h-11 w-11 shrink-0 rounded-xl object-cover shadow-[0_10px_24px_rgba(255,64,59,0.18)]"
-              src={fulltankGarageLogo}
-            />
-            <div />
+            ) : null}
+            <div className="flex min-w-0 items-center justify-center gap-3 px-12">
+              <img
+                alt="FullTank Garage"
+                className="h-11 w-11 shrink-0 rounded-xl object-cover shadow-[0_10px_24px_rgba(255,64,59,0.18)]"
+                src={fulltankGarageLogo}
+              />
+              <h1 className="min-w-0 truncate text-center text-[22px] font-black leading-none text-white">
+                โปรโมชันล่าสุด
+              </h1>
+            </div>
           </div>
-          <h1 className="mx-auto mt-2 max-w-2xl truncate text-center text-[22px] font-black leading-none text-white">
-            {selectedPromotion ? selectedPromotion.title : 'โปรโมชันล่าสุด'}
-          </h1>
         </nav>
 
         {selectedPromotion ? (
