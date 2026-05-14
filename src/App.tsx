@@ -115,10 +115,7 @@ function App() {
         </nav>
 
         {selectedPromotion ? (
-          <PromotionDetail
-            promotion={selectedPromotion}
-            onBack={() => setSelectedPromotion(null)}
-          />
+          <PromotionDetail promotion={selectedPromotion} />
         ) : (
           <section className="space-y-4">
             {isLoadingPromotions ? <PromotionListSkeleton /> : null}
@@ -170,10 +167,8 @@ function PromotionCard({
 }
 
 function PromotionDetail({
-  onBack,
   promotion,
 }: {
-  onBack: () => void
   promotion: Promotion
 }) {
   return (
@@ -199,13 +194,6 @@ function PromotionDetail({
             สามารถแสดงเงื่อนไข ส่วนลด ระยะเวลา และรายละเอียดเพิ่มเติมจากหลังบ้านได้ที่หน้านี้ เมื่อต้องการสอบถามเพิ่มเติมให้ติดต่อ FullTank Garage ผ่าน LINE หรือหน้าร้าน
           </p>
         </div>
-        <button
-          className="mt-5 h-12 w-full rounded-xl border border-white/12 bg-white/5 text-sm font-black text-white transition active:scale-[0.99]"
-          onClick={onBack}
-          type="button"
-        >
-          กลับไปหน้าโปรโมชัน
-        </button>
       </div>
     </article>
   )
