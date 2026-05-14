@@ -10,7 +10,6 @@ type Promotion = {
   imageUrl?: string
   validUntil: string
   gradient: string
-  imageText: string
 }
 
 const promotionHashPrefix = '#promotion/'
@@ -33,7 +32,6 @@ const promotions: Promotion[] = [
     detail: 'โปรโมชันสำหรับลูกค้าที่ติดตั้งฟิล์มรอบคันกับ FullTank Garage สามารถสอบถามรุ่นฟิล์ม เงื่อนไขส่วนลด และคิวติดตั้งได้ที่หน้าร้านหรือ LINE Official',
     validUntil: '31 พ.ค. 2569',
     gradient: 'from-[#ff342f] via-[#6f0908] to-[#121212]',
-    imageText: 'FULL SET',
   },
   {
     title: 'อัปเกรดบานหน้า Clear Vision',
@@ -41,7 +39,6 @@ const promotions: Promotion[] = [
     detail: 'เหมาะสำหรับลูกค้าที่ต้องการเพิ่มประสิทธิภาพกันร้อนบริเวณบานหน้า โดยยังคงทัศนวิสัยชัดเจน รายละเอียดขึ้นอยู่กับรุ่นฟิล์มและรถแต่ละคัน',
     validUntil: '15 มิ.ย. 2569',
     gradient: 'from-[#ff4a45] via-[#243247] to-[#101010]',
-    imageText: 'FRONT',
   },
   {
     title: 'ลูกค้าเก่าแนะนำเพื่อน',
@@ -49,7 +46,6 @@ const promotions: Promotion[] = [
     detail: 'เมื่อลูกค้าเก่าแนะนำเพื่อนมาติดตั้งและลงทะเบียนรับประกันสำเร็จ สามารถติดต่อทีมงานเพื่อรับสิทธิ์ส่วนลดบริการดูแลฟิล์มตามเงื่อนไขที่ร้านกำหนด',
     validUntil: '30 มิ.ย. 2569',
     gradient: 'from-[#ff2f2b] via-[#3b0404] to-[#070707]',
-    imageText: 'REFER',
   },
 ]
 
@@ -94,7 +90,6 @@ function App() {
                 imageUrl: promotion.imageUrl,
                 validUntil: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
                 gradient: promotions[index % promotions.length].gradient,
-                imageText: promotion.title.split(/\s+/).slice(0, 2).join(' ').toUpperCase(),
               }))
             : promotions,
         )
@@ -197,10 +192,7 @@ function PromotionDetailSkeleton() {
       aria-hidden="true"
       className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
     >
-      <div className="relative aspect-[16/9] skeleton-shimmer">
-        <div className="absolute bottom-5 left-5 h-10 w-44 rounded-xl bg-black/20" />
-        <div className="absolute bottom-5 left-5 mt-3 h-8 w-36 translate-y-12 rounded-lg bg-black/20" />
-      </div>
+      <div className="relative aspect-square skeleton-shimmer" />
       <div className="p-5">
         <div className="h-8 w-4/5 rounded-xl skeleton-shimmer" />
         <div className="mt-4 h-12 w-full rounded-2xl skeleton-shimmer" />
@@ -284,7 +276,7 @@ function PromotionDetail({
 
 function PromotionMedia({ promotion }: { promotion: Promotion }) {
   return (
-    <div className={`relative aspect-[16/9] bg-gradient-to-br ${promotion.gradient}`}>
+    <div className={`relative aspect-square bg-gradient-to-br ${promotion.gradient}`}>
       {promotion.imageUrl ? (
         <img
           alt=""
@@ -292,17 +284,6 @@ function PromotionMedia({ promotion }: { promotion: Promotion }) {
           src={promotion.imageUrl}
         />
       ) : null}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_18%,rgba(255,255,255,0.2),transparent_28%),linear-gradient(135deg,transparent,rgba(0,0,0,0.58))]" />
-      <div className="absolute bottom-5 left-5 right-5">
-        <p className="break-words text-4xl font-black tracking-tight text-white sm:text-5xl">
-          {promotion.imageText}
-        </p>
-        <img
-          alt="FullTank Garage"
-          className="mt-3 h-auto w-40 rounded-lg object-cover opacity-90"
-          src={fulltankGarageLogo}
-        />
-      </div>
     </div>
   )
 }
@@ -316,10 +297,7 @@ function PromotionListSkeleton() {
           className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
           key={index}
         >
-          <div className="relative aspect-[16/9] skeleton-shimmer">
-            <div className="absolute bottom-5 left-5 h-10 w-44 rounded-xl bg-black/20" />
-            <div className="absolute bottom-5 left-5 mt-3 h-8 w-36 translate-y-12 rounded-lg bg-black/20" />
-          </div>
+          <div className="relative aspect-square skeleton-shimmer" />
           <div className="p-4">
             <div className="h-6 w-24 rounded-full skeleton-shimmer" />
             <div className="mt-4 h-6 w-4/5 rounded-xl skeleton-shimmer" />
