@@ -192,7 +192,7 @@ function PromotionDetailSkeleton() {
       aria-hidden="true"
       className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
     >
-      <div className="relative aspect-square skeleton-shimmer" />
+      <div className="promotion-square-media relative skeleton-shimmer" />
       <div className="p-5">
         <div className="h-8 w-4/5 rounded-xl skeleton-shimmer" />
         <div className="mt-4 h-12 w-full rounded-2xl skeleton-shimmer" />
@@ -276,7 +276,7 @@ function PromotionDetail({
 
 function PromotionMedia({ promotion }: { promotion: Promotion }) {
   return (
-    <div className={`relative aspect-square bg-gradient-to-br ${promotion.gradient}`}>
+    <div className={`promotion-square-media relative bg-gradient-to-br ${promotion.gradient}`}>
       {promotion.imageUrl ? (
         <img
           alt=""
@@ -297,7 +297,7 @@ function PromotionListSkeleton() {
           className="overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#151515] shadow-[0_0_34px_rgba(255,30,26,0.14)]"
           key={index}
         >
-          <div className="relative aspect-square skeleton-shimmer" />
+          <div className="promotion-square-media relative skeleton-shimmer" />
           <div className="p-4">
             <div className="h-6 w-24 rounded-full skeleton-shimmer" />
             <div className="mt-4 h-6 w-4/5 rounded-xl skeleton-shimmer" />
