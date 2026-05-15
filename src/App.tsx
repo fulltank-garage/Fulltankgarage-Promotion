@@ -163,7 +163,7 @@ function EmptyPromotionState() {
     <div className="rounded-[1.35rem] border border-white/12 bg-[#151515] px-5 py-12 text-center shadow-[0_0_34px_rgba(255,30,26,0.12)]">
       <p className="text-xl font-black text-white">ยังไม่มีโปรโมชัน</p>
       <p className="mt-2 text-sm font-semibold leading-6 text-white/55">
-        โปรโมชันใหม่จะแสดงที่หน้านี้เมื่อทีมงานเพิ่มข้อมูลจากระบบ Admin
+        กลับมาเช็กข้อเสนอพิเศษจาก FullTank Garage ได้เร็วๆ นี้
       </p>
     </div>
   )
