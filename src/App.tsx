@@ -9,7 +9,6 @@ type Promotion = {
   detail: string
   imageUrl?: string
   dateRange: string
-  gradient: string
 }
 
 const promotionHashPrefix = '#promotion/'
@@ -25,30 +24,6 @@ const getPromotionKeyFromHash = () => {
   return window.location.hash.slice(promotionHashPrefix.length)
 }
 
-const promotions: Promotion[] = [
-  {
-    title: 'ติดฟิล์มรอบคัน ราคาพิเศษ',
-    description: 'เลือกรุ่นฟิล์มยอดนิยมพร้อมรับส่วนลดค่าแรงติดตั้งสำหรับรถเก๋งและ SUV',
-    detail: 'โปรโมชันสำหรับลูกค้าที่ติดตั้งฟิล์มรอบคันกับ FullTank Garage สามารถสอบถามรุ่นฟิล์ม เงื่อนไขส่วนลด และคิวติดตั้งได้ที่หน้าร้านหรือ LINE Official',
-    dateRange: 'เริ่ม 1 พ.ค. 2569 ถึง 31 พ.ค. 2569',
-    gradient: 'from-[#ff342f] via-[#6f0908] to-[#121212]',
-  },
-  {
-    title: 'อัปเกรดบานหน้า Clear Vision',
-    description: 'เพิ่มความสบายตาด้วยฟิล์มใสกันร้อนสำหรับลูกค้าที่ติดตั้งรอบคัน',
-    detail: 'เหมาะสำหรับลูกค้าที่ต้องการเพิ่มประสิทธิภาพกันร้อนบริเวณบานหน้า โดยยังคงทัศนวิสัยชัดเจน รายละเอียดขึ้นอยู่กับรุ่นฟิล์มและรถแต่ละคัน',
-    dateRange: 'เริ่ม 1 มิ.ย. 2569 ถึง 15 มิ.ย. 2569',
-    gradient: 'from-[#ff4a45] via-[#243247] to-[#101010]',
-  },
-  {
-    title: 'ลูกค้าเก่าแนะนำเพื่อน',
-    description: 'รับสิทธิ์ส่วนลดบริการดูแลฟิล์ม เมื่อเพื่อนลงทะเบียนรับประกันสำเร็จ',
-    detail: 'เมื่อลูกค้าเก่าแนะนำเพื่อนมาติดตั้งและลงทะเบียนรับประกันสำเร็จ สามารถติดต่อทีมงานเพื่อรับสิทธิ์ส่วนลดบริการดูแลฟิล์มตามเงื่อนไขที่ร้านกำหนด',
-    dateRange: 'เริ่ม 1 มิ.ย. 2569 ถึง 30 มิ.ย. 2569',
-    gradient: 'from-[#ff2f2b] via-[#3b0404] to-[#070707]',
-  },
-]
-
 function App() {
   const [items, setItems] = useState<Promotion[]>([])
   const [isLoadingPromotions, setIsLoadingPromotions] = useState(true)
@@ -56,9 +31,7 @@ function App() {
   const selectedPromotion = useMemo(
     () =>
       selectedPromotionKey
-        ? items.find((promotion) => getPromotionKey(promotion.title) === selectedPromotionKey) ||
-          promotions.find((promotion) => getPromotionKey(promotion.title) === selectedPromotionKey) ||
-          null
+        ? items.find((promotion) => getPromotionKey(promotion.title) === selectedPromotionKey) || null
         : null,
     [items, selectedPromotionKey],
   )
@@ -83,21 +56,18 @@ function App() {
         }
 
         setItems(
-          promotionsFromApi.length > 0
-            ? promotionsFromApi.map((promotion, index) => ({
-                title: promotion.title,
-                description: promotion.description || 'โปรโมชันจาก FullTank Garage',
-                detail: promotion.detail || promotion.description || 'สอบถามรายละเอียดเพิ่มเติมได้ที่ FullTank Garage',
-                imageUrl: promotion.imageUrl,
-                dateRange: formatPromotionDateRange(promotion.startsAt, promotion.endsAt),
-                gradient: promotions[index % promotions.length].gradient,
-              }))
-            : promotions,
+          promotionsFromApi.map((promotion) => ({
+            title: promotion.title,
+            description: promotion.description || 'โปรโมชันจาก FullTank Garage',
+            detail: promotion.detail || promotion.description || 'สอบถามรายละเอียดเพิ่มเติมได้ที่ FullTank Garage',
+            imageUrl: promotion.imageUrl,
+            dateRange: formatPromotionDateRange(promotion.startsAt, promotion.endsAt),
+          })),
         )
       })
       .catch(() => {
         if (isMounted) {
-          setItems(promotions)
+          setItems([])
         }
       })
       .finally(() => {
@@ -173,6 +143,7 @@ function App() {
         ) : (
           <section className="space-y-4">
             {isLoadingPromotions ? <PromotionListSkeleton /> : null}
+            {!isLoadingPromotions && items.length === 0 ? <EmptyPromotionState /> : null}
             {items.map((promotion) => (
               <PromotionCard
                 key={promotion.title}
@@ -184,6 +155,17 @@ function App() {
         )}
       </div>
     </main>
+  )
+}
+
+function EmptyPromotionState() {
+  return (
+    <div className="rounded-[1.35rem] border border-white/12 bg-[#151515] px-5 py-12 text-center shadow-[0_0_34px_rgba(255,30,26,0.12)]">
+      <p className="text-xl font-black text-white">ยังไม่มีโปรโมชัน</p>
+      <p className="mt-2 text-sm font-semibold leading-6 text-white/55">
+        โปรโมชันใหม่จะแสดงที่หน้านี้เมื่อทีมงานเพิ่มข้อมูลจากระบบ Admin
+      </p>
+    </div>
   )
 }
 
