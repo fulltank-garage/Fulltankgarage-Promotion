@@ -226,14 +226,14 @@ function PromotionCard({
           <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
             {promotion.description}
           </p>
-          <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
-            <div className="flex items-center gap-2 text-sm font-bold text-white/62">
-              <CalendarDays size={17} />
-              {promotion.dateRange}
+          <div className="mt-4 flex min-w-0 items-center justify-between gap-2 border-t border-white/10 pt-3">
+            <div className="flex min-w-0 items-center gap-1.5 text-[11px] font-bold leading-none text-white/62">
+              <CalendarDays className="shrink-0" size={14} />
+              <span className="truncate whitespace-nowrap">{promotion.dateRange}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm font-black text-[#ff6965]">
+            <div className="flex shrink-0 items-center gap-0.5 whitespace-nowrap text-[12px] font-black leading-none text-[#ff6965]">
               อ่านรายละเอียด
-              <ChevronRight className="text-[#ff403b]" size={20} />
+              <ChevronRight className="text-[#ff403b]" size={17} />
             </div>
           </div>
         </div>
