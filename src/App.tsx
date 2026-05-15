@@ -4,11 +4,14 @@ import fulltankGarageLogo from './assets/fulltank-garage-logo.jpg'
 import { getJson } from './lib/api'
 
 type Promotion = {
+  id?: number
   title: string
   description: string
   detail: string
   imageUrl?: string
   dateRange: string
+  startsAtLabel: string
+  endsAtLabel: string
 }
 
 const promotionHashPrefix = '#promotion/'
@@ -43,6 +46,7 @@ function App() {
     getJson<
       {
         title: string
+        id?: number
         description?: string
         detail?: string
         imageUrl?: string
@@ -57,11 +61,14 @@ function App() {
 
         setItems(
           promotionsFromApi.map((promotion) => ({
+            id: promotion.id,
             title: promotion.title,
             description: promotion.description || 'โปรโมชันจาก FullTank Garage',
             detail: promotion.detail || promotion.description || 'สอบถามรายละเอียดเพิ่มเติมได้ที่ FullTank Garage',
             imageUrl: promotion.imageUrl,
             dateRange: formatPromotionDateRange(promotion.startsAt, promotion.endsAt),
+            startsAtLabel: formatThaiDate(promotion.startsAt) || 'สอบถามหน้าร้าน',
+            endsAtLabel: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
           })),
         )
       })
@@ -146,7 +153,7 @@ function App() {
             {!isLoadingPromotions && items.length === 0 ? <EmptyPromotionState /> : null}
             {items.map((promotion) => (
               <PromotionCard
-                key={promotion.title}
+                key={promotion.id ?? promotion.title}
                 onOpen={() => openPromotion(promotion)}
                 promotion={promotion}
               />
@@ -241,14 +248,24 @@ function PromotionDetail({
           <CalendarDays className="text-[#ff403b]" size={18} />
           {promotion.dateRange}
         </div>
-        <p className="mt-5 text-base font-semibold leading-8 text-white/70">
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="rounded-2xl border border-white/10 bg-[#0d0d0d] px-4 py-3">
+            <p className="text-xs font-black text-white/38">วันเริ่มโปรโมชัน</p>
+            <p className="mt-1 text-sm font-black text-white/78">{promotion.startsAtLabel}</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-[#0d0d0d] px-4 py-3">
+            <p className="text-xs font-black text-white/38">วันสิ้นสุดโปรโมชัน</p>
+            <p className="mt-1 text-sm font-black text-white/78">{promotion.endsAtLabel}</p>
+          </div>
+        </div>
+        <p className="mt-5 whitespace-pre-line text-base font-semibold leading-8 text-white/70">
           {promotion.description}
         </p>
         <div className="mt-5 rounded-2xl border border-[#ff403b]/22 bg-[#ff403b]/8 p-4">
           <h3 className="text-sm font-black text-white">
             รายละเอียดโปรโมชัน
           </h3>
-          <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
+          <p className="mt-2 whitespace-pre-line text-sm font-semibold leading-6 text-white/62">
             {promotion.detail}
           </p>
         </div>
