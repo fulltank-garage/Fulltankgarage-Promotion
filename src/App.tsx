@@ -8,7 +8,7 @@ type Promotion = {
   description: string
   detail: string
   imageUrl?: string
-  validUntil: string
+  dateRange: string
   gradient: string
 }
 
@@ -30,21 +30,21 @@ const promotions: Promotion[] = [
     title: 'ติดฟิล์มรอบคัน ราคาพิเศษ',
     description: 'เลือกรุ่นฟิล์มยอดนิยมพร้อมรับส่วนลดค่าแรงติดตั้งสำหรับรถเก๋งและ SUV',
     detail: 'โปรโมชันสำหรับลูกค้าที่ติดตั้งฟิล์มรอบคันกับ FullTank Garage สามารถสอบถามรุ่นฟิล์ม เงื่อนไขส่วนลด และคิวติดตั้งได้ที่หน้าร้านหรือ LINE Official',
-    validUntil: '31 พ.ค. 2569',
+    dateRange: 'เริ่ม 1 พ.ค. 2569 ถึง 31 พ.ค. 2569',
     gradient: 'from-[#ff342f] via-[#6f0908] to-[#121212]',
   },
   {
     title: 'อัปเกรดบานหน้า Clear Vision',
     description: 'เพิ่มความสบายตาด้วยฟิล์มใสกันร้อนสำหรับลูกค้าที่ติดตั้งรอบคัน',
     detail: 'เหมาะสำหรับลูกค้าที่ต้องการเพิ่มประสิทธิภาพกันร้อนบริเวณบานหน้า โดยยังคงทัศนวิสัยชัดเจน รายละเอียดขึ้นอยู่กับรุ่นฟิล์มและรถแต่ละคัน',
-    validUntil: '15 มิ.ย. 2569',
+    dateRange: 'เริ่ม 1 มิ.ย. 2569 ถึง 15 มิ.ย. 2569',
     gradient: 'from-[#ff4a45] via-[#243247] to-[#101010]',
   },
   {
     title: 'ลูกค้าเก่าแนะนำเพื่อน',
     description: 'รับสิทธิ์ส่วนลดบริการดูแลฟิล์ม เมื่อเพื่อนลงทะเบียนรับประกันสำเร็จ',
     detail: 'เมื่อลูกค้าเก่าแนะนำเพื่อนมาติดตั้งและลงทะเบียนรับประกันสำเร็จ สามารถติดต่อทีมงานเพื่อรับสิทธิ์ส่วนลดบริการดูแลฟิล์มตามเงื่อนไขที่ร้านกำหนด',
-    validUntil: '30 มิ.ย. 2569',
+    dateRange: 'เริ่ม 1 มิ.ย. 2569 ถึง 30 มิ.ย. 2569',
     gradient: 'from-[#ff2f2b] via-[#3b0404] to-[#070707]',
   },
 ]
@@ -73,6 +73,7 @@ function App() {
         description?: string
         detail?: string
         imageUrl?: string
+        startsAt?: string
         endsAt?: string
       }[]
     >('/public/promotions?public=true')
@@ -88,7 +89,7 @@ function App() {
                 description: promotion.description || 'โปรโมชันจาก FullTank Garage',
                 detail: promotion.detail || promotion.description || 'สอบถามรายละเอียดเพิ่มเติมได้ที่ FullTank Garage',
                 imageUrl: promotion.imageUrl,
-                validUntil: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
+                dateRange: formatPromotionDateRange(promotion.startsAt, promotion.endsAt),
                 gradient: promotions[index % promotions.length].gradient,
               }))
             : promotions,
@@ -228,7 +229,7 @@ function PromotionCard({
           <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
             <div className="flex items-center gap-2 text-sm font-bold text-white/62">
               <CalendarDays size={17} />
-              ถึง {promotion.validUntil}
+              {promotion.dateRange}
             </div>
             <div className="flex items-center gap-1 text-sm font-black text-[#ff6965]">
               อ่านรายละเอียด
@@ -256,7 +257,7 @@ function PromotionDetail({
         </h2>
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-[#0d0d0d] px-4 py-3 text-sm font-black text-white/68">
           <CalendarDays className="text-[#ff403b]" size={18} />
-          ใช้ได้ถึง {promotion.validUntil}
+          {promotion.dateRange}
         </div>
         <p className="mt-5 text-base font-semibold leading-8 text-white/70">
           {promotion.description}
@@ -329,6 +330,25 @@ const formatThaiDate = (value?: string) => {
     month: 'short',
     year: 'numeric',
   })
+}
+
+const formatPromotionDateRange = (startsAt?: string, endsAt?: string) => {
+  const start = formatThaiDate(startsAt)
+  const end = formatThaiDate(endsAt)
+
+  if (!start && !end) {
+    return 'สอบถามหน้าร้าน'
+  }
+
+  if (!start) {
+    return `ถึง ${end}`
+  }
+
+  if (!end) {
+    return `เริ่ม ${start}`
+  }
+
+  return `เริ่ม ${start} ถึง ${end}`
 }
 
 export default App
