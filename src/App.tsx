@@ -283,7 +283,13 @@ function PromotionMedia({ promotion }: { promotion: Promotion }) {
           className="absolute inset-0 size-full object-contain"
           src={promotion.imageUrl}
         />
-      ) : null}
+      ) : (
+        <div className="absolute inset-0 grid place-items-center bg-gradient-to-br from-[#2a1111] via-[#151515] to-[#070707] px-5">
+          <span className="text-center text-sm font-black leading-5 text-white/72">
+            ตัวอย่างรูปภาพโปรโมชัน
+          </span>
+        </div>
+      )}
     </div>
   )
 }
