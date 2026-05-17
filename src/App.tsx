@@ -12,6 +12,7 @@ type Promotion = {
   dateRange: string
   startsAtLabel: string
   endsAtLabel: string
+  isExpired: boolean
 }
 
 const promotionHashPrefix = '#promotion/'
@@ -69,6 +70,7 @@ function App() {
             dateRange: formatPromotionDateRange(promotion.startsAt, promotion.endsAt),
             startsAtLabel: formatThaiDate(promotion.startsAt) || 'สอบถามหน้าร้าน',
             endsAtLabel: formatThaiDate(promotion.endsAt) || 'สอบถามหน้าร้าน',
+            isExpired: isPromotionExpired(promotion.endsAt),
           })),
         )
       })
@@ -212,6 +214,11 @@ function PromotionCard({
 
         <div className="p-4">
           <h2 className="text-xl font-black">{promotion.title}</h2>
+          {promotion.isExpired ? (
+            <span className="mt-2 inline-flex rounded-full bg-[#ff403b]/16 px-3 py-1 text-xs font-black text-[#ff6965]">
+              หมดเขตแล้ว
+            </span>
+          ) : null}
           <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
             {promotion.description}
           </p>
@@ -244,6 +251,11 @@ function PromotionDetail({
         <h2 className="text-2xl font-black leading-tight text-white">
           {promotion.title}
         </h2>
+        {promotion.isExpired ? (
+          <span className="mt-3 inline-flex rounded-full bg-[#ff403b]/16 px-3 py-1 text-xs font-black text-[#ff6965]">
+            หมดเขตแล้ว
+          </span>
+        ) : null}
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-white/10 bg-[#0d0d0d] px-4 py-3 text-sm font-black text-white/68">
           <CalendarDays className="text-[#ff403b]" size={18} />
           {promotion.dateRange}
@@ -335,6 +347,22 @@ const formatThaiDate = (value?: string) => {
     month: 'short',
     year: 'numeric',
   })
+}
+
+const isPromotionExpired = (endsAt?: string) => {
+  if (!endsAt) {
+    return false
+  }
+
+  const date = new Date(endsAt)
+  if (Number.isNaN(date.getTime())) {
+    return false
+  }
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  date.setHours(23, 59, 59, 999)
+  return date < today
 }
 
 const formatPromotionDateRange = (startsAt?: string, endsAt?: string) => {
